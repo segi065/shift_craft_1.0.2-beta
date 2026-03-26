@@ -69,32 +69,27 @@ function format_request(data: any[][]) {
         result.push(staff);
     });
     return result;
-};
-
-function format_needs(needs: any[][]) {
-
-    let result: {
-        [day: number]: {
-            [hour: string]: number
-        }
-    } = {};
-
-    needs.forEach((row,index) => {
-        if(index === 0) return;
+};*/
+function format_needs(needs) {
+    let result = {};
+    needs.forEach((row, index) => {
+        if (index === 0)
+            return;
         let hour = Utilities.formatDate(new Date(row[0]), "Asia/Tokyo", "H");
-        for(let day=1; day<=7; day++){
+        for (let day = 1; day <= 7; day++) {
             let cell = row[day];
-            if(!cell) continue;
-
-            if(!result[day]) result[day] = {};
+            if (!cell)
+                continue;
+            if (!result[day])
+                result[day] = {};
             result[day][hour] = Number(cell);
-        };
+        }
+        ;
     });
-
     return result;
-};
-
-function format_request(requests: string[][]) {
+}
+;
+/*function format_request(requests: string[][]) {
     let daily : {
             [name: string]: {
                 [day: number]: { start: number, end: number }[]
@@ -299,4 +294,3 @@ function write_shift(result) {
     ;
 }
 ;
- * /;

@@ -95,8 +95,6 @@
 
 
             function createtime(el){
-                console.log(el.dataset.time);
-                console.log(Math.floor(el.dataset.time/60)+":"+(Number(el.dataset.time)%60).toString().padStart(2,"0"));
                 const template = document.getElementById("date_template");
                 const clone = template.content.cloneNode(true);
 

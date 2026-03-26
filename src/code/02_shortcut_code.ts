@@ -3,7 +3,7 @@ const SHEET_NAMES = {
     shiftcraft_person: 'シフト調整(人軸)',
     shiftcraft_time: 'シフト調整(時間軸)',
     shiftrequest: 'シフト希望',
-    shiftrequest_form: 'シフト希望フォーム',
+    shiftrequest_form: 'シフト希望時間フォーム',
     staff: 'スタッフ',
     shiftneeds: 'シフト必要数'
 };

@@ -68,7 +68,7 @@ function format_request(data: any[][]) {
         result.push(staff);
     });
     return result;
-};
+};*/
 
 function format_needs(needs: any[][]) {
 
@@ -93,7 +93,7 @@ function format_needs(needs: any[][]) {
     return result;
 };
 
-function format_request(requests: string[][]) {
+/*function format_request(requests: string[][]) {
     let daily : { 
             [name: string]: {
                 [day: number]: { start: number, end: number }[]
@@ -313,4 +313,4 @@ function write_shift(result: { member_table: { [key: string]: { [key: number]: {
         row++;
     };
 
-};*/
+};
