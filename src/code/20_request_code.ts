@@ -1,5 +1,5 @@
 function generate_requesttable(){
-    const data = getsheet('shiftrequest_form').getRange("B2:E"+getsheet('shiftrequest_form').getLastRow()).getValues();
+    const data = getsheet('shiftrequest_form').getRange("A1:D"+getsheet('shiftrequest_form').getLastRow()).getValues();
     const table_ss = getsheet('shiftrequest');
     
     data.shift();
@@ -7,7 +7,10 @@ function generate_requesttable(){
         row[1] = Utilities.formatDate(row[1], "Asia/Tokyo", "yyyy/MM/dd");
     });
 
-    const names = [...new Set(data.map(row => row[0]))];
+    const staff = getsheet('staff').getRange("A1:A"+getsheet('staff').getLastRow()).getValues();
+    const names = [...new Set(staff.slice(1).map(row => row[0]))];
+
+    const needs_data = getsheet('shiftneeds').getRange("A1:H"+getsheet('shiftneeds').getLastRow()).getValues();
     const dates = [...new Set(data.map(row => row[1]))].sort();
 
     const output: any[][] = [];
@@ -27,5 +30,5 @@ function generate_requesttable(){
     });
     console.log(output);
     table_ss.clearContents();
-    table_ss.getRange(2, 2, output.length, output[0].length).setValues(output);
+    table_ss.getRange(1, 1, output.length, output[0].length).setValues(output);
 };

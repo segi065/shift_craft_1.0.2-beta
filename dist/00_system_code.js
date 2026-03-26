@@ -18,31 +18,40 @@ function doGet(e) {
     return routes[page]();
 }
 const routes = {
-    index: () => render("index"),
-    schedule: () => {
-        /*if (() === []){
-            const template = HtmlService.createTemplateFromFile("error");
-            template.error = `scheduleシートに何もデータがありません。\nスプレットシートを確認してください。`;
-            return template.evaluate()
-                            .setTitle('My Workly：schedule')
-                            .addMetaTag("viewport", "width=device-width, initial-scale=1");
-        };
-        const template = HtmlService.createTemplateFromFile("schedule");
-        template.data = get_schedule_data();
-        template.joblist = get_joblist();
-        template.contentlist = get_contentlist();
-        template.header = get_headerdata();
+    index: () => render("20_index"),
+    shiftcraft: () => {
+        const template = HtmlService.createTemplateFromFile("30_shiftcraft");
+        template.data = get_shiftcraft_data();
         return template.evaluate()
-                        .setTitle('My Workly：schedule')
-                        .addMetaTag("viewport", "width=device-width, initial-scale=1");*/
+            .setTitle('ShiftCraft：shiftcraft')
+            .addMetaTag("viewport", "width=device-width, initial-scale=1");
     },
+    shiftrequest: () => {
+        const template = HtmlService.createTemplateFromFile("40_shiftrequest");
+        template.data = get_shiftrequest_data();
+        return template.evaluate()
+            .setTitle('ShiftCraft：shiftrequest')
+            .addMetaTag("viewport", "width=device-width, initial-scale=1");
+    },
+    staff: () => {
+        const template = HtmlService.createTemplateFromFile("50_staff");
+        template.data = get_staff_data();
+        return template.evaluate()
+            .setTitle('ShiftCraft：staff')
+            .addMetaTag("viewport", "width=device-width, initial-scale=1");
+    },
+    needshift: () => {
+        const template = HtmlService.createTemplateFromFile("60_shiftneeds");
+        template.data = get_needshift_data();
+        return template.evaluate()
+            .setTitle('ShiftCraft：needshift')
+            .addMetaTag("viewport", "width=device-width, initial-scale=1");
+    }
 };
 function render(page) {
-    const template = HtmlService.createTemplateFromFile(page);
-    //template.header = get_headerdata();
-    //template.events = get_calendarevents(Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy-MM-dd"));
-    return template.evaluate()
-        .setTitle("：index")
+    return HtmlService.createTemplateFromFile(page)
+        .evaluate()
+        .setTitle("index")
         .addMetaTag("viewport", "width=device-width, initial-scale=1");
 }
 ;

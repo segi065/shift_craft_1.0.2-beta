@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <base target="_top">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            td{
+                white-space:pre-line;
+            }
+        </style>
+    </head>
+<body class="bg-light">
+        
+    <!------ヘッダー用ボディ------>
+    <?!= include('10_header', null); ?>
+    <!------ヘッダー用ボディ------>
+
+    <div class="m-3">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+            シフト調整
+            </div>
+            <div class="card-body">
+            
+            <button type="button" class="btn btn-primary m-2" onclick="shiftcraft_btn()">作成</button>
+            <button type="button" class="btn btn-primary m-2" onclick="go('shiftrequest')">編集</button>
+            <button type="button" class="btn btn-primary m-2" onclick="go('shiftarchive')">記録</button>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover align-middle">
+                        <thead class="table-dark" id="thead"></thead>
+                        <tbody id="tbody"></tbody>
+                    </table>
+
+                    <template id="thead_template">              
+                        <tr>
+                            <td class="name"></td>
+                            <td class="day1"></td>
+                            <td class="day2"></td>
+                            <td class="day3"></td>
+                            <td class="day4"></td>
+                            <td class="day5"></td>
+                            <td class="day6"></td>
+                            <td class="day7"></td>
+                            <td class="totaltime"></td>
+                        </tr>
+                    </template>
+
+                    <template id="tbody_template">
+                        <tr>                      
+                            <td class="name"></td>
+                            <td class="day1"></td>
+                            <td class="day2"></td>
+                            <td class="day3"></td>
+                            <td class="day4"></td>
+                            <td class="day5"></td>
+                            <td class="day6"></td>
+                            <td class="day7"></td>
+                            <td class="totaltime"></td>
+                        </tr>
+                    </template>
+
+                    <script>
+
+                        function gettime(times) {
+                            const time = times.split('\n');
+                            total = 0;
+
+                            time.forEach(t => {
+                                if (!/^\d{2}:\d{2}-\d{2}:\d{2}$/.test(t)) {
+                                    return;
+                                };
+
+                                const [start, end] = t.split('-');
+
+                                const [sh, sm] = start.split(':').map(Number);
+                                const [eh, em] = end.split(':').map(Number);
+
+                                const startMin = sh * 60 + sm;
+                                const endMin = eh * 60 + em;
+
+                                total += endMin - startMin;
+                            });
+
+                            return total;
+                        };
+
+                        let craftdata = JSON.parse('<?= JSON.stringify(data) ?>');
+
+
+                        craftdata.forEach((row,index) => {
+                            if(index == 0){
+                                const thead_template = document.getElementById("thead_template").content.cloneNode(true);
+                                thead_template.querySelector('.name').textContent = row[0];
+                                thead_template.querySelector('.day1').textContent = row[1];
+                                thead_template.querySelector('.day2').textContent = row[2];
+                                thead_template.querySelector('.day3').textContent = row[3];
+                                thead_template.querySelector('.day4').textContent = row[4];
+                                thead_template.querySelector('.day5').textContent = row[5];
+                                thead_template.querySelector('.day6').textContent = row[6];
+                                thead_template.querySelector('.day7').textContent = row[7];
+                                thead_template.querySelector('.totaltime').textContent = row[8];
+                                document.getElementById("thead").appendChild(thead_template);
+                            }else{
+                                const tbody_template = document.getElementById("tbody_template").content.cloneNode(true);
+                                tbody_template.querySelector('.name').textContent = row[0];
+                                tbody_template.querySelector('.name').dataset.name = row[0];
+                                tbody_template.querySelector('.name').dataset.row = index;
+                                tbody_template.querySelector('.name').dataset.column = 0;
+                                tbody_template.querySelector('.name').dataset.type = "row";                                
+
+                                tbody_template.querySelector('.day1').textContent = row[1];
+                                tbody_template.querySelector('.day1').dataset.name = row[0];
+                                tbody_template.querySelector('.day1').dataset.date = craftdata[0][1];
+                                tbody_template.querySelector('.day1').dataset.time = gettime(row[1]);
+                                tbody_template.querySelector('.day1').dataset.row = index;
+                                tbody_template.querySelector('.day1').dataset.column = 1;
+                                tbody_template.querySelector('.day1').dataset.type = "day";
+
+                                tbody_template.querySelector('.day2').textContent = row[2];
+                                tbody_template.querySelector('.day2').dataset.name = row[0];
+                                tbody_template.querySelector('.day2').dataset.date = craftdata[0][2];
+                                tbody_template.querySelector('.day2').dataset.time = gettime(row[2]);
+                                tbody_template.querySelector('.day2').dataset.row = index;
+                                tbody_template.querySelector('.day2').dataset.column = 2;
+                                tbody_template.querySelector('.day2').dataset.type = "day";
+
+                                tbody_template.querySelector('.day3').textContent = row[3];
+                                tbody_template.querySelector('.day3').dataset.name = row[0];
+                                tbody_template.querySelector('.day3').dataset.date = craftdata[0][3];
+                                tbody_template.querySelector('.day3').dataset.time = gettime(row[3]);
+                                tbody_template.querySelector('.day3').dataset.row = index;
+                                tbody_template.querySelector('.day3').dataset.column = 3;
+                                tbody_template.querySelector('.day3').dataset.type = "day";
+
+                                tbody_template.querySelector('.day4').textContent = row[4];
+                                tbody_template.querySelector('.day4').dataset.name = row[0];
+                                tbody_template.querySelector('.day4').dataset.date = craftdata[0][4];
+                                tbody_template.querySelector('.day4').dataset.time = gettime(row[4]);
+                                tbody_template.querySelector('.day4').dataset.row = index;
+                                tbody_template.querySelector('.day4').dataset.column = 4;
+                                tbody_template.querySelector('.day4').dataset.type = "day";
+
+                                tbody_template.querySelector('.day5').textContent = row[5];
+                                tbody_template.querySelector('.day5').dataset.name = row[0];
+                                tbody_template.querySelector('.day5').dataset.date = craftdata[0][5];
+                                tbody_template.querySelector('.day5').dataset.time = gettime(row[5]);
+                                tbody_template.querySelector('.day5').dataset.row = index;
+                                tbody_template.querySelector('.day5').dataset.column = 5;
+                                tbody_template.querySelector('.day5').dataset.type = "day";
+
+                                tbody_template.querySelector('.day6').textContent = row[6];
+                                tbody_template.querySelector('.day6').dataset.name = row[0];
+                                tbody_template.querySelector('.day6').dataset.date = craftdata[0][6];
+                                tbody_template.querySelector('.day6').dataset.time = gettime(row[6]);
+                                tbody_template.querySelector('.day6').dataset.row = index;
+                                tbody_template.querySelector('.day6').dataset.column = 6;
+                                tbody_template.querySelector('.day6').dataset.type = "day";
+
+                                tbody_template.querySelector('.day7').textContent = row[7];
+                                tbody_template.querySelector('.day7').dataset.name = row[0];
+                                tbody_template.querySelector('.day7').dataset.date = craftdata[0][7];
+                                tbody_template.querySelector('.day7').dataset.time = gettime(row[7]);
+                                tbody_template.querySelector('.day7').dataset.row = index;
+                                tbody_template.querySelector('.day7').dataset.column = 7;
+                                tbody_template.querySelector('.day7').dataset.type = "day";
+
+                                tbody_template.querySelector('.totaltime').textContent = row[8];
+                                tbody_template.querySelector('.totaltime').dataset.name = row[0];
+                                tbody_template.querySelector('.totaltime').dataset.date = craftdata[0][8];
+                                tbody_template.querySelector('.totaltime').dataset.row = index;
+                                tbody_template.querySelector('.totaltime').dataset.column = 8;
+                                tbody_template.querySelector('.totaltime').dataset.type = "total";
+                                document.getElementById("tbody").appendChild(tbody_template);
+                            };
+                        });
+
+                        function shiftcraft_btn(){
+                            
+                            google.script.run
+                                .withSuccessHandler()
+                                .shiftcraft_btn();
+                                
+                        };
+
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!------ヘッダー用ボディ------>
+    <?!= include('31_modal_shiftcraft', null); ?>
+    <!------ヘッダー用ボディ------>
+</body>
+</html>

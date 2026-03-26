@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <base target="_top">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            td{
+                white-space:pre-line;
+            }
+        </style>
+    </head>
+<body class="bg-light">
+        
+    <!------ヘッダー用ボディ------>
+    <?!= include('10_header', null); ?>
+    <!------ヘッダー用ボディ------>
+
+    <div class="m-3">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                必要人数
+            </div>
+            <div class="card-body">
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover align-middle">
+                        <thead class="table-dark" id="thead"></thead>
+                        <tbody id="tbody"></tbody>
+                    </table>
+
+                    <template id="thead_template">              
+                        <tr>
+                            <td class="hour"></td>
+                            <td class="day1"></td>
+                            <td class="day2"></td>
+                            <td class="day3"></td>
+                            <td class="day4"></td>
+                            <td class="day5"></td>
+                            <td class="day6"></td>
+                            <td class="day7"></td>
+                        </tr>
+                    </template>
+
+                    <template id="tbody_template">
+                        <tr>                      
+                            <td class="hour"></td>
+                            <td class="day1"></td>
+                            <td class="day2"></td>
+                            <td class="day3"></td>
+                            <td class="day4"></td>
+                            <td class="day5"></td>
+                            <td class="day6"></td>
+                            <td class="day7"></td>
+                        </tr>
+                    </template>
+
+                    <script>
+
+                        const needsdata = JSON.parse('<?= JSON.stringify(data) ?>');
+
+
+                        needsdata.forEach((row,index) => {
+                            if(index == 0){
+                                const thead_template = document.getElementById("thead_template").content.cloneNode(true);
+                                thead_template.querySelector('.hour').textContent = row[0];
+                                thead_template.querySelector('.day1').textContent = row[1];
+                                thead_template.querySelector('.day2').textContent = row[2];
+                                thead_template.querySelector('.day3').textContent = row[3];
+                                thead_template.querySelector('.day4').textContent = row[4];
+                                thead_template.querySelector('.day5').textContent = row[5];
+                                thead_template.querySelector('.day6').textContent = row[6];
+                                thead_template.querySelector('.day7').textContent = row[7];
+                                document.getElementById("thead").appendChild(thead_template);
+                            }else{
+                                const tbody_template = document.getElementById("tbody_template").content.cloneNode(true);
+                                tbody_template.querySelector('.hour').textContent = row[0];
+                                tbody_template.querySelector('.hour').dataset.name = row[0];
+                                tbody_template.querySelector('.hour').dataset.row = index;
+                                tbody_template.querySelector('.hour').dataset.column = 0;
+                                tbody_template.querySelector('.hour').dataset.type = "row";
+
+                                tbody_template.querySelector('.day1').textContent = row[1];
+                                tbody_template.querySelector('.day1').dataset.hour = row[0];
+                                tbody_template.querySelector('.day1').dataset.date = needsdata[0][1];
+                                tbody_template.querySelector('.day1').dataset.row = index;
+                                tbody_template.querySelector('.day1').dataset.column = 1;
+                                tbody_template.querySelector('.day1').dataset.type = "day";
+
+                                tbody_template.querySelector('.day2').textContent = row[2];
+                                tbody_template.querySelector('.day2').dataset.hour = row[0];
+                                tbody_template.querySelector('.day2').dataset.date = needsdata[0][2];
+                                tbody_template.querySelector('.day2').dataset.row = index;
+                                tbody_template.querySelector('.day2').dataset.column = 2;
+                                tbody_template.querySelector('.day2').dataset.type = "day";
+
+                                tbody_template.querySelector('.day3').textContent = row[3];
+                                tbody_template.querySelector('.day3').dataset.hour = row[0];
+                                tbody_template.querySelector('.day3').dataset.date = needsdata[0][3];
+                                tbody_template.querySelector('.day3').dataset.row = index;
+                                tbody_template.querySelector('.day3').dataset.column = 3;
+                                tbody_template.querySelector('.day3').dataset.type = "day";
+
+                                tbody_template.querySelector('.day4').textContent = row[4];
+                                tbody_template.querySelector('.day4').dataset.hour = row[0];
+                                tbody_template.querySelector('.day4').dataset.date = needsdata[0][4];
+                                tbody_template.querySelector('.day4').dataset.row = index;
+                                tbody_template.querySelector('.day4').dataset.column = 4;
+                                tbody_template.querySelector('.day4').dataset.type = "day";
+
+                                tbody_template.querySelector('.day5').textContent = row[5];
+                                tbody_template.querySelector('.day5').dataset.hour = row[0];
+                                tbody_template.querySelector('.day5').dataset.date = needsdata[0][5];
+                                tbody_template.querySelector('.day5').dataset.row = index;
+                                tbody_template.querySelector('.day5').dataset.column = 5;
+                                tbody_template.querySelector('.day5').dataset.type = "day";
+
+                                tbody_template.querySelector('.day6').textContent = row[6];
+                                tbody_template.querySelector('.day6').dataset.hour = row[0];
+                                tbody_template.querySelector('.day6').dataset.date = needsdata[0][6];
+                                tbody_template.querySelector('.day6').dataset.row = index;
+                                tbody_template.querySelector('.day6').dataset.column = 6;
+                                tbody_template.querySelector('.day6').dataset.type = "day";
+
+                                tbody_template.querySelector('.day7').textContent = row[7];
+                                tbody_template.querySelector('.day7').dataset.hour = row[0];
+                                tbody_template.querySelector('.day7').dataset.date = needsdata[0][7];
+                                tbody_template.querySelector('.day7').dataset.row = index;
+                                tbody_template.querySelector('.day7').dataset.column = 7;
+                                tbody_template.querySelector('.day7').dataset.type = "day";
+
+                                document.getElementById("tbody").appendChild(tbody_template);
+                            };
+                        });
+
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!------ヘッダー用ボディ------>
+    <?!= include('61_modal_shiftneeds', null); ?>
+    <!------ヘッダー用ボディ------>
+</body>
+</html>

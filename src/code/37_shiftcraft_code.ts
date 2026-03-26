@@ -1,13 +1,11 @@
 function shiftcraft_btn(){
-    const request_data = getsheet('shiftrequest').getRange("B6:L"+getsheet('shiftrequest').getLastRow()).getValues();
-    const needs_data = getsheet('shiftneeds').getRange("B6:I"+getsheet('shiftneeds').getLastRow()).getValues();
-
-
+    generate_shifttable_time();
+    generate_shifttable_person();
 }
 
 function generate_shifttable_time(){
-    const request_data = getsheet('shiftrequest_form').getRange("B2:E"+getsheet('shiftrequest_form').getLastRow()).getValues();
-    const needs_data = getsheet('shiftneeds').getRange("B5:I"+getsheet('shiftneeds').getLastRow()).getValues();
+    const request_data = getsheet('shiftrequest_form').getRange("A1:D"+getsheet('shiftrequest_form').getLastRow()).getValues();
+    const needs_data = getsheet('shiftneeds').getRange("A1:H"+getsheet('shiftneeds').getLastRow()).getValues();
     const shiftcraft_time_ss = getsheet('shiftcraft_time');
 
     const date = needs_data[0].slice(1).map((d: any) => Utilities.formatDate(new Date(d), "Asia/Tokyo", "MM/dd"));
@@ -42,7 +40,7 @@ function generate_shifttable_time(){
 
     });
 
-    shiftcraft_time_ss.getRange(2, 2, output.length, output[0].length).setValues(output);
+    shiftcraft_time_ss.getRange(1, 1, output.length, output[0].length).setValues(output);
 };
 
 function shuffle(array: any[]) {
@@ -54,7 +52,7 @@ function shuffle(array: any[]) {
 };
 
 function generate_shifttable_person(){
-    const data = getsheet('shiftcraft_time').getRange("B2:I"+getsheet('shiftcraft_time').getLastRow()).getValues();
+    const data = getsheet('shiftcraft_time').getRange("A1:H"+getsheet('shiftcraft_time').getLastRow()).getValues();
     const table_ss = getsheet('shiftcraft_person');
 
     const dates = data[0].slice(1);
@@ -63,8 +61,8 @@ function generate_shifttable_person(){
     const output: any[][] = [];
     output.push(["名前", ...dates]);
 
-    const staff = getsheet('staff').getRange("B3:B"+getsheet('staff').getLastRow()).getValues();
-    const stafflist = [...staff];
+    const staff = getsheet('staff').getRange("A1:A"+getsheet('staff').getLastRow()).getValues();
+    const stafflist = [...staff.slice(1)];
 
     stafflist.forEach((staffRow: any[]) => {
         const name = staffRow[0];
@@ -92,7 +90,7 @@ function generate_shifttable_person(){
     });
 
     table_ss.clearContents();
-    table_ss.getRange(2, 2, output.length, output[0].length).setValues(output);
+    table_ss.getRange(1, 1, output.length, output[0].length).setValues(output);
 };
 
 function mergetimes(times: string[]) {

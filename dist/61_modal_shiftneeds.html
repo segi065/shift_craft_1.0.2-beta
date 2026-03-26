@@ -1,0 +1,168 @@
+<body>
+    <div class="modal fade" id="shiftModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+
+                <div class="modal-header position-relative">
+                    <div class="position-absolute start-50 translate-middle-x fs-5" id="modal-title"></div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+
+                <div class="modal-body">
+
+                    <div id="edit_modal"></div>
+
+
+                        <template id="date_template">
+                            <div class="date-block mb-3">
+
+                                <div class="modalday d-block mb-2"></div>
+                                <div class="hour"></div>
+
+                            </div>
+                        </template>
+
+                        <template id="hour_template">
+                            <div class="row time-row mb-3">
+                                <div class="col">
+                                    <div class="form-label time"></div>
+                                </div>
+                                <div class="col">
+                                    <input type="number" class="form-control w-auto member">
+                                </div>
+                            </div>
+                        </template>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">
+                        キャンセル
+                    </button>
+                    <button class="btn btn-primary" id="savebtn">
+                        保存
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector("tbody").addEventListener("click", 
+            function(e){
+          
+                const edit_modal = document.getElementById("edit_modal");
+                    edit_modal.replaceChildren();
+
+                const td = e.target.closest("td");
+                    if(!td) return;
+
+                const title = td.dataset.id;
+                    document.getElementById("modal-title").textContent = "シフトの調整";
+            
+                createdate(td);
+
+                const modal = new bootstrap.Modal(document.getElementById("shiftModal"));
+                modal.show();
+
+        });
+
+            function createdate(el){
+                const template = document.getElementById("date_template");
+                const clone = template.content.cloneNode(true);
+                console.log(el);
+
+                if(el.dataset.type === "day"){
+                    clone.querySelector(".modalday").textContent = el.dataset.date;
+                    createhour(el, clone);
+                };
+                if(el.dataset.type === "row"){
+                    const tr = el.closest("tr");
+                    const data = Array.from(tr.children).slice(1);
+                    data.forEach(td => {
+                        clone.querySelector(".modalday").textContent = td.dataset.date;
+                        createhour(td, clone);
+                    });
+                };
+                
+                document.getElementById("edit_modal").appendChild(clone);
+            };
+
+            function createhour(el, date_clone){
+                const template = document.getElementById("hour_template");
+                const clone = template.content.cloneNode(true);
+
+                clone.querySelector(".time").textContent = el.dataset.hour;
+                clone.querySelector(".member").value = el.textContent;
+                
+                date_clone.querySelector(".hour").appendChild(clone);
+            };
+            
+
+
+        document.getElementById("savebtn").addEventListener("click", function () {
+
+            document.querySelectorAll(".date-block").forEach((block,index) => {
+
+                console.log(block);
+                const data = [];
+                const row = block.dataset.row;
+                const column = block.dataset.column;
+                block.querySelectorAll(".time-row").forEach(time => {
+
+                    const start = time.querySelector(".start").value;
+                    const end = time.querySelector(".end").value;
+                    if(start && end)data.push(`${start}-${end}`);
+
+                });
+                block.querySelectorAll(".text-row").forEach(text => {
+                    
+                    data.push(text.value);
+                });
+
+                const result = {
+                    data: data,
+                    row: row,
+                    column: column
+                };
+                
+                const td = document.querySelector(
+                    `td[data-row="${row}"][data-column="${column}"]`
+                );
+
+                if (result && td) console.log(td);
+
+                google.script.run
+                    .withSuccessHandler(() => {
+                    td.textContent = data.join("\n");
+                    
+                    const modal = bootstrap.Modal.getInstance(document.getElementById("shiftModal"));
+                    modal.hide();
+                    
+                    })
+                    .save_shiftrequest(result);
+            });
+        });
+
+
+        document.getElementById("edit_modal").addEventListener("click", function(e){
+            if (e.target.classList.contains("add-time")){
+                const el = e.target.closest(".date-block").querySelector(".times");
+
+                const template = document.getElementById("timerow_template");
+                const clone = template.content.cloneNode(true);
+
+                el.appendChild(clone);
+            };
+        });
+
+        document.getElementById("edit_modal").addEventListener("click", function(e){
+            if (e.target.classList.contains("delete-time")){
+                e.target.closest(".time-row").remove();
+            };
+        });
+
+    </script>
+</body>

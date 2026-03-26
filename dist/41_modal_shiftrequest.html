@@ -1,0 +1,230 @@
+<body>
+    <div class="modal fade" id="shiftModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+
+                <div class="modal-header">
+                    <h5 id="modal-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+
+                <div class="modal-body">
+
+                    <div id="edit_modal"></div>
+
+
+                        <template id="date_template">
+                            <div class="date-block mb-3">
+
+                                <strong class="modalday d-block mb-2"></strong>
+
+                                <div class="times"></div>
+                                <div class="text"></div>
+                                <div class="addbtn"></div>
+
+                            </div>
+                        </template>
+
+
+                        <template id="timerow_template">
+                            <div class="d-flex align-items-center gap-2 mb-2 time-row">
+                                <input type="time" step="900" class="form-control w-auto start">
+                                <strong>-</strong>
+                                <input type="time" step="900" class="form-control w-auto end">
+                                <button class= "btn btn-danger btn-sm delete-time">削除</button>
+                            </div>
+                        </template>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">
+                        キャンセル
+                    </button>
+                    <button class="btn btn-primary" id="savebtn">
+                        保存
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector("tbody").addEventListener("click", 
+            function(e){
+          
+                const edit_modal = document.getElementById("edit_modal");
+                    edit_modal.replaceChildren();
+
+                const td = e.target.closest("td");
+                    if(!td) return;
+
+                const title = td.dataset.name;
+                    document.getElementById("modal-title").textContent = title;
+            
+                const type = td.dataset.type;
+                    if(type === "row"){
+                        const row = td.closest("tr");
+                        const data = Array.from(row.children).slice(1);
+                        data.forEach(td => {
+                            const type = td.dataset.type;
+                            if(type === "day") createtime(td);
+                            if(type === "max" || type === "min") createtext(td);
+
+                        });
+                    };
+                    if(type === "day"){
+                    createtime(td);
+
+                    };
+                    if(type === "max" || type === "min"){
+                    createtext(td);
+
+                    };
+                
+                const modal = new bootstrap.Modal(document.getElementById("shiftModal"));
+                modal.show();
+
+        });
+
+
+            function createtime(el){
+                console.log(el.dataset.time);
+                console.log(Math.floor(el.dataset.time/60)+":"+(Number(el.dataset.time)%60).toString().padStart(2,"0"));
+                const template = document.getElementById("date_template");
+                const clone = template.content.cloneNode(true);
+
+                const day = el.dataset.date;
+                    clone.querySelector(".modalday").textContent = day;
+
+                const date_block = clone.querySelector(".date-block");
+                    date_block.dataset.row = el.dataset.row;
+                    date_block.dataset.column = el.dataset.column;
+
+                const times = clone.querySelector(".times");
+
+                // 既存時間を追加
+                const lines = el.textContent.trim().split('\n');
+                    lines.forEach(line => {
+                        const [start,end] = line.split("-");
+                        if(start && end){
+                            const template = document.getElementById("timerow_template");
+                            const clone = template.content.cloneNode(true);
+                            
+                            const clone_start = clone.querySelector(".start");
+                                clone_start.value = formattime(start.trim());
+
+                            const clone_end = clone.querySelector(".end");
+                                clone_end.value= formattime(end.trim());
+
+                            times.appendChild(clone);
+                        };
+                    });
+
+                const btn = document.createElement("button"); 
+                    btn.type = "button"; 
+                    btn.className = "btn btn-primary btn-sm add-time"; 
+                    btn.textContent = "+追加";
+                clone.querySelector(".addbtn").appendChild(btn);
+
+                document.getElementById("edit_modal").appendChild(clone);
+            };
+
+
+                function formattime(t){                
+                    const [h,m] = t.split(":");
+                    return h.padStart(2,"0")+":"+m.padStart(2,"0");
+                };
+
+
+            function createtext(el){
+                const row = el.dataset.row;
+                const column = el.dataset.column;
+
+                const date_template = document.getElementById("date_template");
+                const date_clone = date_template.content.cloneNode(true);
+
+                    date_clone.querySelector(".modalday").textContent = el.dataset.date;
+
+                const date_block = date_clone.querySelector(".date-block");
+                    date_block.dataset.row = row;
+                    date_block.dataset.column = column;
+
+                    const text_input = document.createElement("input");
+                        text_input.type = "number";
+                        text_input.className = "form-control text-row";
+                        text_input.value = el.textContent.trim();
+                        date_clone.querySelector(".text").appendChild(text_input);
+
+
+                document.getElementById("edit_modal").appendChild(date_clone);
+            };
+
+
+        document.getElementById("savebtn").addEventListener("click", function () {
+
+            document.querySelectorAll(".date-block").forEach((block,index) => {
+
+                console.log(block);
+                const data = [];
+                const row = block.dataset.row;
+                const column = block.dataset.column;
+                block.querySelectorAll(".time-row").forEach(time => {
+
+                    const start = time.querySelector(".start").value;
+                    const end = time.querySelector(".end").value;
+                    if(start && end)data.push(`${start}-${end}`);
+
+                });
+                block.querySelectorAll(".text-row").forEach(text => {
+                    
+                    data.push(text.value);
+                });
+
+                const result = {
+                    data: data,
+                    row: row,
+                    column: column
+                };
+                
+                const td = document.querySelector(
+                    `td[data-row="${row}"][data-column="${column}"]`
+                );
+
+                if (result && td) console.log(td);
+
+                google.script.run
+                    .withSuccessHandler(() => {
+                    td.textContent = data.join("\n");
+                    
+                    const modal = bootstrap.Modal.getInstance(document.getElementById("shiftModal"));
+                    modal.hide();
+                    
+                    })
+                    .save_shiftrequest(result);
+            });
+        });
+
+
+        document.getElementById("edit_modal").addEventListener("click", function(e){
+            if (e.target.classList.contains("add-time")){
+                const el = e.target.closest(".date-block").querySelector(".times");
+
+                const template = document.getElementById("timerow_template");
+                const clone = template.content.cloneNode(true);
+
+                el.appendChild(clone);
+            };
+        });
+
+        document.getElementById("edit_modal").addEventListener("click", function(e){
+            if (e.target.classList.contains("delete-time")){
+                e.target.closest(".time-row").remove();
+            };
+        });
+
+    </script>
+</body>
